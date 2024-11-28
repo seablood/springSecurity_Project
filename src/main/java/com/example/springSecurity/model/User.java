@@ -19,13 +19,17 @@ public class User {
     private String password;
     private String email;
     private String role = "ROLE_USER";
+    private String provider;
+    private String providerId;
     @CreationTimestamp
     private Timestamp createDate;
 
     @Builder
-    public User(String username, String password, String email){
+    public User(String username, String password, String email, String provider, String providerId){
         this.username = username;
         this.password = password;
         this.email = email;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 }
