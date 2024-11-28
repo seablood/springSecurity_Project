@@ -1,0 +1,47 @@
+spring:
+  profiles:
+    active: dev
+    group:
+      dev:
+        -oauth2
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+    defer-datasource-initialization: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+
+  h2:
+    console:
+      enabled: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${SPRING_OAUTH2_CLIENT_ID}
+            client-secret: ${SPRING_OAUTH2_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
