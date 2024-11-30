@@ -1,9 +1,11 @@
 package com.example.springSecurity.config.jwt;
 
 import com.example.springSecurity.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -68,5 +70,37 @@ public class JwtTokenProvider {
         response.setHeader(accessHeader, accessToken);
         response.setHeader(refreshHeader, refreshToken);
         log.info("Access Token, Refresh Token 헤더 설정 완료");
+    }
+
+    public String resolveAccessToken(HttpServletRequest request){
+        String authorizationToken = request.getHeader(accessHeader);
+        if(authorizationToken != null && authorizationToken.startsWith(TOKEN_PREFIX)){
+            return authorizationToken.substring(TOKEN_PREFIX.length());
+        }
+        return null;
+    }
+
+    public String resolveRefreshToken(HttpServletRequest request){
+        String authorizationToken = request.getHeader(refreshHeader);
+        if(authorizationToken != null && authorizationToken.startsWith(TOKEN_PREFIX)){
+            return authorizationToken.substring(TOKEN_PREFIX.length());
+        }
+        return null;
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    }
+
+    public String getUsername(String token) {
+        return getClaims(token).get("username", String.class);
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            return !getClaims(token).getExpiration().before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -44,7 +44,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
         if(user == null){
             user = User.builder()
-                    .username(oAuth2UserInfo.getName())
+                    .username(oAuth2UserInfo.getProvider()+"_"+oAuth2UserInfo.getProviderId())
                     .email(oAuth2UserInfo.getEmail())
                     .provider(oAuth2UserInfo.getProvider())
                     .providerId(oAuth2UserInfo.getProviderId())
