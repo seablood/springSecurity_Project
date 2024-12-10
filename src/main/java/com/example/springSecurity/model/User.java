@@ -22,8 +22,13 @@ public class User {
     private String role = "ROLE_USER";
     private String provider;
     private String providerId;
+    private String refreshToken;
     @CreationTimestamp
     private Timestamp createDate;
+
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
 
     @Builder
     public User(String username, String password, String email, String provider, String providerId){

@@ -24,7 +24,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User { // 인증된 
 
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return attributes;
     }
 
     @Override

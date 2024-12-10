@@ -27,12 +27,6 @@ public class JwtTokenProvider {
     @Value("${jwt.secretKey}")
     private String secretKey;
 
-    @Value("${jwt.access.expiration}")
-    private Long accessTokenExpirationPeriod;
-
-    @Value("${jwt.refresh.expiration}")
-    private Long refreshTokenExpirationPeriod;
-
     @Value("${jwt.access.header}")
     private String accessHeader;
 
