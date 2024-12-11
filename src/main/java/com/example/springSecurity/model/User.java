@@ -22,6 +22,7 @@ public class User {
     private String role = "ROLE_USER";
     private String provider;
     private String providerId;
+    @Column(length = 400)
     private String refreshToken;
     @CreationTimestamp
     private Timestamp createDate;
