@@ -57,8 +57,8 @@ public class JwtTokenProvider {
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken){
         response.setStatus(HttpServletResponse.SC_OK);
 
-        response.setHeader(accessHeader, accessToken);
-        response.setHeader(refreshHeader, refreshToken);
+        response.setHeader(accessHeader, TOKEN_PREFIX + accessToken);
+        response.setHeader(refreshHeader, TOKEN_PREFIX + refreshToken);
         log.info("Access Token, Refresh Token 헤더 설정 완료");
     }
 

@@ -31,6 +31,12 @@ public class IndexController {
         return "user";
     }
 
+    @GetMapping("/userPage")
+    public @ResponseBody String userPage(@AuthenticationPrincipal PrincipalDetails principal){
+        log.info(principal.getUser().toString());
+        return "userPage";
+    }
+
     @GetMapping("/admin")
     public @ResponseBody String admin(){
         return "admin";
