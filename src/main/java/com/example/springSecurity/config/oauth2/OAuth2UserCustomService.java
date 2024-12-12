@@ -51,6 +51,6 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
                     .build();
             userRepository.save(user);
         }
-        return new PrincipalDetails(user, oAuth2User.getAttributes());
+        return new PrincipalDetails(user, oAuth2User.getAttributes()); // OAuth2User를 상속받은 PrincipalDetails 반환
     }
 }

@@ -39,7 +39,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         user.updateRefreshToken(refreshToken);
         userRepository.saveAndFlush(user);
 
-        response.sendRedirect("/");
+        response.sendRedirect("/"); // 인덱스 페이지로 리다이렉트
 
         log.info("로그인 성공한 유저: " + user.getUsername());
         log.info("AccessToken: " + accessToken);

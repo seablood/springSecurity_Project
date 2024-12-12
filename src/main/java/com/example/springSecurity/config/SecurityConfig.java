@@ -73,8 +73,11 @@ public class SecurityConfig {
         http.httpBasic((httpBasic) -> httpBasic.disable());
         http.csrf((csrf) -> csrf.disable());
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.disable()));
+
+        // 세션이 아닌 JWT 토큰을 사용하므로 세션은 비활성화 한다.
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // 인증 여부, 유저의 권한에 따라 접근 가능한 페이지를 제한한다.
         http.authorizeHttpRequests((authorizeRequests) ->
                 authorizeRequests
                         .requestMatchers("/user/**", "/jwt-test").authenticated()
@@ -82,6 +85,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll());
 
+        // 폼 로그인을 사용하지 않으므로 OAuth2 관련 설정만 해준다.
         http.oauth2Login((oauth2Login) ->
                 oauth2Login
                         .loginPage("/loginForm")
@@ -89,12 +93,18 @@ public class SecurityConfig {
                         .failureHandler(oAuth2FailureHandler)
                         .userInfoEndpoint((endpoint) -> endpoint.userService(oAuth2UserCustomService)));
 
+        // 로그아웃 필터 뒤에 자체 로그인 필터를 놓는다.
+        // 자체 로그인 필터 앞에 토큰(인증) 필터를 놓는다.
+        // 필터 순서: LogoutFilter -> tokenFilter -> CustomJsonUsernamePasswordAuthenticationFilter
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
         http.addFilterBefore(tokenFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // 자체 로그인 필터에 필요한 AuthenticationManager 생성
+    // 패스워드를 비교할 수 있도록 패스워드 인코딩 클래스 설정
+    // UserDetailsService 설정
     @Bean
     public AuthenticationManager authenticationManager(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -103,16 +113,20 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
+    // 자체 로그인 Success 핸들러 생성
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
         return new LoginSuccessHandler(jwtTokenProvider, userRepository);
     }
 
+    // 자체 로그인 Failure 핸들러 생성
     @Bean
     public LoginFailureHandler loginFailureHandler() {
         return new LoginFailureHandler();
     }
 
+    // CustomJsonUsernamePasswordAuthenticationFilter 생성
+    // AuthenticationManager와 핸들러 등록
     @Bean
     public CustomJsonUsernamePasswordAuthenticationFilter customJsonUsernamePasswordAuthenticationFilter(){
         CustomJsonUsernamePasswordAuthenticationFilter filter = new CustomJsonUsernamePasswordAuthenticationFilter(objectMapper);
@@ -123,6 +137,7 @@ public class SecurityConfig {
         return filter;
     }
 
+    // 토큰(인증) 필터 생성
     @Bean
     public TokenFilter tokenFilter() {
         return new TokenFilter(jwtTokenProvider, userRepository, principalDetailsService);

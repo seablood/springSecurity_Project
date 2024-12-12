@@ -51,24 +51,28 @@ public class TokenFilter extends OncePerRequestFilter {
         }
     }
 
+    // AccessToken을 이용해 인증 절차 수행
     public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
         String accessToken = jwtTokenProvider.resolveAccessToken(request);
 
         if(accessToken != null && jwtTokenProvider.validateToken(accessToken)){
             User user = userRepository.findByUsername(jwtTokenProvider.getUsername(accessToken));
-            saveAuthentication(user, accessToken);
+            saveAuthentication(user, accessToken); // ContextHolder에 인증 객체 저장
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // 다음 필터로 진행
     }
 
     public void saveAuthentication(User user, String token){
         UserDetails userDetails = principalDetailsService.loadUserByUsername(user.getUsername());
+        // Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
 
+        // ContextHolder에 인증 객체 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    // AccessToken 및 RefreshToken 재발급
     public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken){
         userRepository.findByRefreshToken(refreshToken)
                 .ifPresent(user -> {
@@ -78,6 +82,7 @@ public class TokenFilter extends OncePerRequestFilter {
                 });
     }
 
+    // RefreshToken 재발급 및 저장
     public String reIssueRefreshToken(User user){
         String refreshToken = jwtTokenProvider.createToken(user, Duration.ofDays(7));
         user.updateRefreshToken(refreshToken);
