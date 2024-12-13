@@ -29,6 +29,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private static final String NOT_CHECK_URL = "/login"; // /login으로 들어오는 요청은 필터링 예외
 
+    // 인증이나 권한이 필요한 주소 요청을 받음
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(request.getRequestURI().equals(NOT_CHECK_URL)){
@@ -68,7 +69,7 @@ public class TokenFilter extends OncePerRequestFilter {
         // Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
 
-        // ContextHolder에 인증 객체 저장
+        // 시큐리티 세션에 접근 후 ContextHolder에 인증 객체 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

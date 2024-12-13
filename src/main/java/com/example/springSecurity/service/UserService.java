@@ -1,6 +1,7 @@
 package com.example.springSecurity.service;
 
 import com.example.springSecurity.dto.CreateUserDTO;
+import com.example.springSecurity.dto.ResponseUserDTO;
 import com.example.springSecurity.model.User;
 import com.example.springSecurity.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -23,5 +24,12 @@ public class UserService {
         User user = CreateUserDTO.toEntity(dto);
         System.out.println(secretKey);
         return userRepository.save(user);
+    }
+
+    public ResponseUserDTO findById(Long id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾지 못했습니다."));
+
+        return ResponseUserDTO.toDto(user);
     }
 }

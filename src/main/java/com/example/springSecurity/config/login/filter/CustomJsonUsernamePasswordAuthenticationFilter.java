@@ -24,7 +24,7 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
     private static final String PASSWORD_KEY = "password";
     private static final AntPathRequestMatcher DEFAULT_LOGIN_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(DEFAULT_LOGIN_REQUEST_URL, HTTP_METHOD); // "/login" + POST 방식으로 온 요청에 매칭된다.
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper; // JSON 데이터 파싱해주는 역할
 
 
     public CustomJsonUsernamePasswordAuthenticationFilter(ObjectMapper objectMapper) {
@@ -50,6 +50,8 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
         // AuthenticationManager가 인증 시 사용할 인증 대상 객체
         // AuthenticationManager 객체 설정은 SecurityConfig에서 설정
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+
+        // PrincipalDetailsService loadUserByUsername() 호출하여 PrincipalDetails 생성 후 username과 passsword 일치 여부를 확인
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 }

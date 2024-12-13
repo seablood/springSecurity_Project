@@ -87,7 +87,7 @@ public class SecurityConfig {
         // 인증 여부, 유저의 권한에 따라 접근 가능한 페이지를 제한한다.
         http.authorizeHttpRequests((authorizeRequests) ->
                 authorizeRequests
-                        .requestMatchers("/user/**", "/jwt-test").authenticated()
+                        .requestMatchers("/user/**", "/jwt-test", "/api/v1/user").authenticated()
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll());
